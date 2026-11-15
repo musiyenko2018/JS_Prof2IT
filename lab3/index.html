@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторна робота №3</title>
+</head>
+<body>
+    <h2>Облік навчального процесу (Кафедра)</h2>
+
+    <!-- Кнопки-таби -->
+    <div>
+        <button onclick="openTab('teachers')">Викладачі</button>
+        <button onclick="openTab('subjects')">Дисципліни</button>
+        <button onclick="openTab('groups')">Групи</button>
+    </div>
+    <br>
+
+    <div>
+        <button onclick="showAddForm()">+ Додати запис</button>
+    </div>
+    <br>
+
+    <div id="form-container"></div>
+
+    <div id="table-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
