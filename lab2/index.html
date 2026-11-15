@@ -1,1 +1,32 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторна робота №2</title>
+</head>
+<body>
+    <h2>Облік навчального процесу (Кафедра)</h2>
 
+    <!-- Кнопки-таби для перемикання між таблицями -->
+    <div>
+        <button onclick="openTab('teachers')">Викладачі</button>
+        <button onclick="openTab('subjects')">Дисципліни</button>
+        <button onclick="openTab('groups')">Групи</button>
+    </div>
+    <br>
+
+    <!-- Кнопка для відкриття форми додавання -->
+    <div>
+        <button onclick="showAddForm()">+ Додати запис</button>
+    </div>
+    <br>
+
+    <!-- Блок, куди JS підставить форму для поточної таблиці -->
+    <div id="form-container"></div>
+
+    <!-- Контейнер для таблиць -->
+    <div id="table-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
