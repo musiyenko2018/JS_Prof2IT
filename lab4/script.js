@@ -1,22 +1,4 @@
-// початкові дані (використовуються якщо localStorage ще порожній)
-const defaultTeachers = [
-    { id: 1, name: "Коваленко О.П.", degree: "доцент", position: "завідувач кафедри", subject: "Хмарні технології", experience: 15, rate: 1.0 },
-    { id: 2, name: "Бондаренко І.В.", degree: "професор", position: "професор", subject: "Штучний інтелект", experience: 22, rate: 1.0 },
-    { id: 3, name: "Ткаченко М.С.", degree: "старший викладач", position: "викладач", subject: "Комп'ютерні мережі", experience: 8, rate: 0.75 }
-];
-
-const defaultSubjects = [
-    { id: 1, title: "Хмарні технології", code: "ОК-12", hours: 120, credits: 4, semester: 5, control: "Екзамен" },
-    { id: 2, title: "Штучний інтелект", code: "ВК-04", hours: 150, credits: 5, semester: 6, control: "Екзамен" },
-    { id: 3, title: "Комп'ютерні мережі", code: "ОК-08", hours: 90, credits: 3, semester: 4, control: "Залік" }
-];
-
-const defaultGroups = [
-    { id: 1, name: "КІ-21", specialty: "123 Комп'ютерна інженерія", course: 3, count: 24, curator: "Коваленко О.П.", form: "Денна" },
-    { id: 2, name: "АІ-22", specialty: "174 Автоматизація", course: 2, count: 19, curator: "Бондаренко І.В.", form: "Денна" },
-    { id: 3, name: "КІ-20з", specialty: "123 Комп'ютерна інженерія", course: 4, count: 15, curator: "Ткаченко М.С.", form: "Заочна" }
-];
-
+// масиви даних (наповнюються виключно з localStorage)
 let teachers = [];
 let subjects = [];
 let groups = [];
@@ -29,16 +11,9 @@ function loadFromStorage() {
     let savedSubjects = localStorage.getItem("kafedra_subjects");
     let savedGroups = localStorage.getItem("kafedra_groups");
 
-    if (savedTeachers && savedSubjects && savedGroups) {
-        teachers = JSON.parse(savedTeachers);
-        subjects = JSON.parse(savedSubjects);
-        groups = JSON.parse(savedGroups);
-    } else {
-        teachers = JSON.parse(JSON.stringify(defaultTeachers));
-        subjects = JSON.parse(JSON.stringify(defaultSubjects));
-        groups = JSON.parse(JSON.stringify(defaultGroups));
-        saveToStorage();
-    }
+    teachers = savedTeachers ? JSON.parse(savedTeachers) : [];
+    subjects = savedSubjects ? JSON.parse(savedSubjects) : [];
+    groups = savedGroups ? JSON.parse(savedGroups) : [];
 }
 
 // збереження всіх масивів у localStorage
@@ -46,11 +21,10 @@ function saveToStorage() {
     localStorage.setItem("kafedra_teachers", JSON.stringify(teachers));
     localStorage.setItem("kafedra_subjects", JSON.stringify(subjects));
     localStorage.setItem("kafedra_groups", JSON.stringify(groups));
-    console.log("Дані збережено в localStorage");
 }
 
-// скидання до початкових даних
-function resetData() {
+// повне очищення сховища
+function clearStorage() {
     localStorage.removeItem("kafedra_teachers");
     localStorage.removeItem("kafedra_subjects");
     localStorage.removeItem("kafedra_groups");
@@ -61,7 +35,6 @@ function resetData() {
 // синхронізація між кількома відкритими вкладками браузера
 window.addEventListener("storage", function(event) {
     if (event.key == "kafedra_teachers" || event.key == "kafedra_subjects" || event.key == "kafedra_groups") {
-        console.log("Оновлення з іншої вкладки!");
         loadFromStorage();
         openTab(currentTab);
     }
@@ -77,6 +50,9 @@ function openTab(tabName) {
     if (tabName == "teachers") {
         html = '<h3>Викладачі</h3><p><small>* Натисніть на ПІБ, щоб змінити</small></p><table border="1" cellpadding="5">';
         html += '<tr><th>ID</th><th>ПІБ</th><th>Звання</th><th>Посада</th><th>Дисципліна</th><th>Стаж</th><th>Ставка</th><th>Дія</th></tr>';
+        if (teachers.length == 0) {
+            html += '<tr><td colspan="8" align="center">Немає даних. Натисніть "+ Додати запис"</td></tr>';
+        }
         for (let i = 0; i < teachers.length; i++) {
             html += '<tr>' +
                 '<td>' + teachers[i].id + '</td>' +
@@ -94,6 +70,9 @@ function openTab(tabName) {
     else if (tabName == "subjects") {
         html = '<h3>Дисципліни</h3><p><small>* Натисніть на назву, щоб змінити</small></p><table border="1" cellpadding="5">';
         html += '<tr><th>ID</th><th>Назва</th><th>Шифр</th><th>Годин</th><th>Кредитів</th><th>Семестр</th><th>Контроль</th><th>Дія</th></tr>';
+        if (subjects.length == 0) {
+            html += '<tr><td colspan="8" align="center">Немає даних. Натисніть "+ Додати запис"</td></tr>';
+        }
         for (let i = 0; i < subjects.length; i++) {
             html += '<tr>' +
                 '<td>' + subjects[i].id + '</td>' +
@@ -111,6 +90,9 @@ function openTab(tabName) {
     else if (tabName == "groups") {
         html = '<h3>Групи</h3><p><small>* Натисніть на шифр групи, щоб змінити</small></p><table border="1" cellpadding="5">';
         html += '<tr><th>ID</th><th>Група</th><th>Спеціальність</th><th>Курс</th><th>Студентів</th><th>Куратор</th><th>Форма</th><th>Дія</th></tr>';
+        if (groups.length == 0) {
+            html += '<tr><td colspan="8" align="center">Немає даних. Натисніть "+ Додати запис"</td></tr>';
+        }
         for (let i = 0; i < groups.length; i++) {
             html += '<tr>' +
                 '<td>' + groups[i].id + '</td>' +
@@ -181,7 +163,6 @@ function editCell(td, type, index, field) {
         }
 
         if (type == "teachers") {
-            // якщо змінили ПІБ викладача, оновлюємо його і в кураторах груп
             for (let i = 0; i < groups.length; i++) {
                 if (groups[i].curator == oldVal) {
                     groups[i].curator = newVal;
@@ -189,7 +170,6 @@ function editCell(td, type, index, field) {
             }
             teachers[index][field] = newVal;
         } else if (type == "subjects") {
-            // якщо змінили назву дисципліни, оновлюємо її і у викладачів
             for (let i = 0; i < teachers.length; i++) {
                 if (teachers[i].subject == oldVal) {
                     teachers[i].subject = newVal;
@@ -220,7 +200,10 @@ function showAddForm() {
     let box = document.getElementById("form-container");
     
     if (currentTab == "teachers") {
-        // формуємо випадаючий список із існуючих дисциплін
+        if (subjects.length == 0) {
+            alert("Спочатку додайте хоча б одну дисципліну у вкладці 'Дисципліни'!");
+            return;
+        }
         let subjOptions = "";
         for (let i = 0; i < subjects.length; i++) {
             subjOptions += '<option value="' + subjects[i].title + '">' + subjects[i].title + '</option>';
@@ -252,7 +235,10 @@ function showAddForm() {
         '</div>';
     }
     if (currentTab == "groups") {
-        // формуємо випадаючий список кураторів із таблиці викладачів
+        if (teachers.length == 0) {
+            alert("Спочатку додайте хоча б одного викладача у вкладці 'Викладачі'!");
+            return;
+        }
         let curOptions = "";
         for (let i = 0; i < teachers.length; i++) {
             curOptions += '<option value="' + teachers[i].name + '">' + teachers[i].name + '</option>';
@@ -333,6 +319,5 @@ function addRecord() {
     openTab(currentTab);
 }
 
-// спочатку підтягуємо збережені дані з localStorage, потім малюємо таблицю
 loadFromStorage();
 openTab("teachers");
